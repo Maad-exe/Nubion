@@ -1,149 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+{% extends "base.html" %}
+
+{% block title %}Weather App - Home{% endblock %}
+
+{% block head %}
+    {{ super() }} {# This includes the parent block's content (like global CSS links from base.html) #}
     <style>
-        body {
-            background: linear-gradient(to right, #649bff, #4285f4);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .container {
-            max-width: 700px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        .search-box {
-            margin: 2rem 0;
-        }
-        .search-input {
-            border-radius: 30px;
-            padding: 12px 20px;
-            border: 1px solid #ddd;
-            width: 100%;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-        .search-input:focus {
-            outline: none;
-            box-shadow: 0 2px 15px rgba(66, 133, 244, 0.3);
-            border-color: #4285f4;
-        }
-        .search-button {
-            border-radius: 30px;
-            padding: 10px 30px;
-            background-color: #4285f4;
-            color: white;
-            border: none;
-            transition: all 0.3s;
-        }
-        .search-button:hover {
-            background-color: #3279e3;
-            transform: translateY(-2px);
-        }
-        .weather-card {
-            background-color: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            margin-top: 2rem;
-        }
-        .weather-temp {
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #4285f4;
-        }
-        .weather-desc {
-            text-transform: capitalize;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-        }
-        .weather-details {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-        }
-        .detail-item {
-            text-align: center;
-            padding: 1rem;
-            flex: 1;
-            min-width: 120px;
-        }
-        .detail-label {
-            font-size: 0.9rem;
-            color: #777;
-        }
-        .detail-value {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-top: 0.5rem;
-        }
-        .alert {
-            margin-top: 2rem;
-        }
+        /* Styles specific to weather.html, if any, that are not in static/css/style.css */
+        /* Most of your weather-specific styles are already in static/css/style.css */
+        /* You can add or override styles here if needed for this page only */
+
+        /* Example: If you wanted a slightly different max-width for the weather container on this page */
+        /* .weather-container {
+            max-width: 850px; 
+        } */
+
+        /* The .alert style was in a previous version of weather.html's head. */
+        /* It's generally better to have alert styling globally in style.css or rely on Bootstrap's default. */
+        /* If you need specific alert styling for this page, add it here. */
+        /* .alert {
+            margin-top: 1.5rem;
+        } */
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1 class="text-center mb-4">Weather Forecast</h1>
-        
-        <form action="/weather" method="post" class="search-box">
-            <div class="input-group">
-                <input type="text" name="city" class="form-control search-input" placeholder="Enter city name..." required>
-                <button type="submit" class="btn search-button">Search</button>
+{% endblock %}
+
+{% block content %}
+<div class="weather-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Weather Forecast</h1>
+        {# Removed the "View History" button from here as it's in the top action bar #}
+    </div>
+    <div class="search-box">
+        <form method="post" action="{{ url_for('weather.index') }}">
+            {{ form.hidden_tag() }}
+            <div class="input-group input-group-lg"> {# Made input group larger for better prominence #}
+                <span class="input-group-text bg-transparent border-end-0">
+                    <i class="fas fa-search text-primary"></i>
+                </span>
+                {{ form.city(class="form-control search-input border-start-0", placeholder="Enter city name...", autocomplete="off") }}
+                {{ form.submit(class="btn search-button") }}
             </div>
+            {% if form.city.errors %}
+                <div class="mt-2">
+                    {% for error in form.city.errors %}
+                        <span class="text-danger d-block">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </form>
-        
-        {% if error %}
-        <div class="alert alert-danger text-center" role="alert">
-            {{ error }}
-        </div>
-        {% endif %}
-        
-        {% if weather_data %}
-        <div class="weather-card">
-            <div class="row align-items-center">
-                <div class="col-md-6 text-center text-md-start">
-                    <h2>{{ weather_data.city }}</h2>
-                    <p class="weather-desc">{{ weather_data.description }}</p>
-                    <div class="weather-temp">{{ weather_data.temperature }}°C</div>
-                    <p>Feels like: {{ weather_data.feels_like }}°C</p>
-                </div>
-                <div class="col-md-6 text-center">
-                    <img src="https://openweathermap.org/img/wn/{{ weather_data.icon }}@4x.png" alt="{{ weather_data.description }}">
-                </div>
+    </div>
+
+    {% if weather_data %}
+    <div class="weather-card mt-4">
+        <div class="row align-items-center">
+            <div class="col-md-7 text-center text-md-start">
+                <h2 class="mb-1">{{ weather_data.city }}</h2>
+                <p class="weather-desc lead mb-2">{{ weather_data.description }}</p>
+                <div class="weather-temp display-4 my-3">{{ weather_data.temperature }}°C</div>
+                <p class="text-muted">Feels like: {{ weather_data.feels_like }}°C</p>
             </div>
-            
-            <div class="weather-details">
-                <div class="detail-item">
-                    <div class="detail-label">Humidity</div>
-                    <div class="detail-value">{{ weather_data.humidity }}%</div>
-                </div>
-                <div class="detail-item">
-                    <div class="detail-label">Wind Speed</div>
-                    <div class="detail-value">{{ weather_data.wind_speed }} m/s</div>
-                </div>
+            <div class="col-md-5 text-center">
+                <img src="https://openweathermap.org/img/wn/{{ weather_data.icon }}@4x.png" alt="{{ weather_data.description }}" class="img-fluid">
             </div>
         </div>
-        {% else %}
-        <div class="text-center mt-5">
-            <p>Enter a city name to get the current weather information.</p>
+        <hr class="my-4">
+        <div class="weather-details">
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-tint me-1"></i> Humidity</div>
+                <div class="detail-value">{{ weather_data.humidity }}%</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label"><i class="fas fa-wind me-1"></i> Wind Speed</div>
+                <div class="detail-value">{{ weather_data.wind_speed }} m/s</div>
+            </div>
+            {# You can add more details here if available and desired #}
+        </div>
+        {% if current_user.is_authenticated %}
+        <div class="text-center mt-4 pt-3 border-top">
+            <p class="text-success small"><i class="fas fa-check-circle me-1"></i> This search has been saved to your history.</p>
         </div>
         {% endif %}
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    {% else %}
+    <div class="welcome-message mt-5 text-center">
+        <i class="fas fa-cloud-sun fa-4x mb-3 text-primary"></i>
+        <h2>Welcome to the Weather App</h2>
+        <p class="lead">Enter a city name above to get the current weather information.</p>
+        {% if not current_user.is_authenticated %}
+            <p class="mt-4">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary mx-1">
+                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                </a>
+                or
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-success mx-1">
+                    <i class="fas fa-user-plus me-1"></i>Register
+                </a>
+                to save your searches!
+            </p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }} {# This includes the parent block's scripts (like global JS links from base.html) #}
+    {# Add any page-specific JavaScript here if needed #}
+    <script>
+        // Example: You could add specific JS for the weather page here
+        // console.log("Weather page scripts loaded.");
+    </script>
+{% endblock %}

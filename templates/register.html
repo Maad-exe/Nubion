@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Weather App - Register{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="card shadow-lg">
+        <div class="row g-0">
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="register-image h-100">
+                    <!-- Weather image side panel -->
+                </div>
+            </div>
+            <div class="col-lg-7">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <i class="fas fa-user-plus fa-3x text-primary"></i>
+                        <h1 class="mt-2">Create Account</h1>
+                        <p class="text-muted">Join us to track your weather searches</p>
+                    </div>
+                    
+                    <form method="post" action="{{ url_for('auth.register') }}">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                {{ form.username(class="form-control", placeholder="Username") }}
+                            </div>
+                            {% for error in form.username.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                {{ form.email(class="form-control", placeholder="Email") }}
+                            </div>
+                            {% for error in form.email.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form.password(class="form-control", placeholder="Password") }}
+                            </div>
+                            {% for error in form.password.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="mb-3">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                {{ form.password2(class="form-control", placeholder="Confirm Password") }}
+                            </div>
+                            {% for error in form.password2.errors %}
+                                <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                        </div>
+                    </form>
+                    
+                    <hr class="my-4">
+                    <div class="text-center">
+                        <p>Already have an account? <a href="{{ url_for('auth.login') }}" class="text-decoration-none">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<style>
+    .auth-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .register-image {
+        background: url('https://source.unsplash.com/random/600x800/?clouds,storm') no-repeat center center;
+        background-size: cover;
+        border-radius: 15px 0 0 15px;
+    }
+    
+    .input-group-text {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}

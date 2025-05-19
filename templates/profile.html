@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Weather App - Profile{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center py-3">
+            <h1 class="mb-0">User Profile</h1>
+        </div>
+        <div class="card-body p-5">
+            <div class="text-center mb-4">
+                <div class="avatar-container mb-3">
+                    <img src="https://www.gravatar.com/avatar/{{ current_user.email|lower|md5 }}?s=200&d=identicon" 
+                         class="rounded-circle border shadow-sm" alt="Profile Picture">
+                </div>
+                <h2 class="text-primary">{{ current_user.username }}</h2>
+                <p class="text-muted">Member since {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+            </div>
+            
+            <div class="row mt-5">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
+                            <h5 class="card-title">Email</h5>
+                            <p class="card-text lead">{{ current_user.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-history fa-2x text-primary mb-3"></i>
+                            <h5 class="card-title">Search Activity</h5>
+                            <p class="card-text lead">{{ current_user.weather_searches.count() }} searches</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="d-flex justify-content-center mt-4">
+                <a href="{{ url_for('weather.history') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-history me-2"></i> View Search History
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block head %}
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .avatar-container {
+        width: 150px;
+        height: 150px;
+        margin: 0 auto;
+        overflow: hidden;
+    }
+    
+    .avatar-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border: 4px solid white;
+    }
+</style>
+{% endblock %}
