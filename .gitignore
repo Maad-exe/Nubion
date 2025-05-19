@@ -41,3 +41,4 @@ ENV/
 # Environments
 .env
 .venv
+.vercel
