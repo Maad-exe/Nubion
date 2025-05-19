@@ -2,10 +2,15 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from flask_login import login_required, current_user
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import requests
+import time
 from forms import WeatherSearchForm
 from models import WeatherSearch, User, db
 
 weather = Blueprint('weather', __name__)
+
+# Add simple in-memory cache for weather API responses
+_weather_cache = {}
+_cache_timeout = 300  # 5 minutes in seconds
 
 @weather.route('/', methods=['GET', 'POST'])
 def index():
@@ -23,10 +28,22 @@ def index():
 
 def get_weather_data(city):
     api_key = current_app.config['OPENWEATHERMAP_API_KEY']
+    
+    # Check cache first (with case-insensitive lookup)
+    current_time = int(time.time())
+    city_key = city.lower()
+    
+    if city_key in _weather_cache:
+        cached_data, timestamp = _weather_cache[city_key]
+        if current_time - timestamp < _cache_timeout:
+            # Return cached data if it's still fresh
+            return render_template('weather.html', form=WeatherSearchForm(), weather_data=cached_data)
+    
+    # If not in cache or cache expired, fetch from API
     url = f'https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&appid={api_key}'
     
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=5)  # Add timeout
         data = response.json()
         
         if response.status_code == 200:
@@ -39,6 +56,9 @@ def get_weather_data(city):
                 'wind_speed': data['wind']['speed'],
                 'feels_like': round(data['main']['feels_like'])
             }
+            
+            # Cache the results
+            _weather_cache[city_key] = (weather_data, current_time)
             
             # Save search to database if user is logged in
             if current_user.is_authenticated:

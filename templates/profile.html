@@ -4,45 +4,45 @@
 
 {% block content %}
 <div class="profile-container">
-    <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white text-center py-3">
-            <h1 class="mb-0">User Profile</h1>
+    <div class="card shadow-lg overflow-hidden">
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h1 class="mb-0 display-6">User Profile</h1>
         </div>
-        <div class="card-body p-5">
-            <div class="text-center mb-4">
+        <div class="card-body p-lg-5 p-4">
+            <div class="text-center mb-5">
                 <div class="avatar-container mb-3">
-                    <img src="https://www.gravatar.com/avatar/{{ current_user.email|lower|md5 }}?s=200&d=identicon" 
+                    <img src="https://www.gravatar.com/avatar/{{ current_user.email|lower|md5 }}?s=120&d=identicon" 
                          class="rounded-circle border shadow-sm" alt="Profile Picture">
                 </div>
-                <h2 class="text-primary">{{ current_user.username }}</h2>
-                <p class="text-muted">Member since {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                <h2 class="h3 fw-bold text-primary">{{ current_user.username }}</h2>
+                <p class="text-muted small">Member since {{ current_user.created_at.strftime('%B %d, %Y') }}</p>
             </div>
             
-            <div class="row mt-5">
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <i class="fas fa-envelope fa-2x text-primary mb-3"></i>
-                            <h5 class="card-title">Email</h5>
-                            <p class="card-text lead">{{ current_user.email }}</p>
+            <div class="row gy-4">
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-envelope fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title mb-1">Email Address</h5>
+                            <p class="card-text fs-5">{{ current_user.email }}</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100 border-0 shadow-sm">
-                        <div class="card-body text-center">
-                            <i class="fas fa-history fa-2x text-primary mb-3"></i>
-                            <h5 class="card-title">Search Activity</h5>
-                            <p class="card-text lead">{{ current_user.weather_searches.count() }} searches</p>
+                <div class="col-md-6">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-history fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title mb-1">Search Activity</h5>
+                            <p class="card-text fs-5">{{ current_user.weather_searches.count() }} searches recorded</p>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <div class="d-flex justify-content-center mt-4">
-                <a href="{{ url_for('weather.history') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-history me-2"></i> View Search History
+            <div class="text-center mt-5">
+                <a href="{{ url_for('weather.history') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-search-location me-2"></i> View Full History
                 </a>
             </div>
         </div>

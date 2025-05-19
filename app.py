@@ -1,5 +1,6 @@
 import requests
 import hashlib
+from datetime import datetime # Add this import
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -18,6 +19,11 @@ app.config.from_object(Config)
 @app.template_filter('md5')
 def md5_filter(s):
     return hashlib.md5(s.lower().encode()).hexdigest()
+
+# Context processor to make current year available to all templates
+@app.context_processor
+def inject_current_year():
+    return {'current_year': datetime.utcnow().year}
 
 # Initialize extensions
 db.init_app(app)

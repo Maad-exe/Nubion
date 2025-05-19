@@ -1,9 +1,19 @@
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from .env file if it exists
+load_dotenv()
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key-here'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///weather_app.db'
+    
+    # Adjust database URL for Vercel deployment
+    DATABASE_URL = os.environ.get('DATABASE_URL')
+    if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+    
+    SQLALCHEMY_DATABASE_URI = DATABASE_URL or 'sqlite:///weather_app.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # JWT settings
@@ -11,4 +21,4 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
     
     # OpenWeatherMap API
-    OPENWEATHERMAP_API_KEY = "a6f2ec91bd6a23627a664b37649d0404"
+    OPENWEATHERMAP_API_KEY = os.environ.get('OPENWEATHERMAP_API_KEY') or "a6f2ec91bd6a23627a664b37649d0404"

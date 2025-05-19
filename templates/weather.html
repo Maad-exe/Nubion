@@ -3,46 +3,58 @@
 {% block title %}Weather App - Home{% endblock %}
 
 {% block head %}
-    {{ super() }} {# This includes the parent block's content (like global CSS links from base.html) #}
+    {{ super() }}
     <style>
-        /* Styles specific to weather.html, if any, that are not in static/css/style.css */
-        /* Most of your weather-specific styles are already in static/css/style.css */
-        /* You can add or override styles here if needed for this page only */
-
-        /* Example: If you wanted a slightly different max-width for the weather container on this page */
-        /* .weather-container {
-            max-width: 850px; 
-        } */
-
-        /* The .alert style was in a previous version of weather.html's head. */
-        /* It's generally better to have alert styling globally in style.css or rely on Bootstrap's default. */
-        /* If you need specific alert styling for this page, add it here. */
-        /* .alert {
-            margin-top: 1.5rem;
-        } */
+        /* Page-specific compact styles */
+        .weather-container h1 {
+            margin-bottom: 0rem;
+        }
+        .search-box .input-group-lg {
+            height: auto;
+        }
+        .search-box .input-group-lg .form-control,
+        .search-box .input-group-lg .btn {
+            padding: 0.25rem 0.5rem;
+            height: auto;
+        }
+        .search-box .input-group-text {
+            padding: 0.5rem;
+        }
+        .card-body {
+            padding: 0.15rem;
+        }
+        .card-body .row {
+            margin-bottom: 0.5rem;
+        }
+        .weather-details {
+            margin-top: 0.5rem !important;
+        }
+        .my-4 {
+            margin-top: 1rem !important;
+            margin-bottom: 1rem !important;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
 <div class="weather-container">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Weather Forecast</h1>
-        {# Removed the "View History" button from here as it's in the top action bar #}
+    <div class="text-center mb-3">
+        <h1 class="h2 fw-bold">Weather Forecast</h1>
+        <p class="text-muted">Get real-time weather updates for any city.</p>
     </div>
-    <div class="search-box">
+
+    <div class="search-box card card-body shadow-sm mb-3">
         <form method="post" action="{{ url_for('weather.index') }}">
             {{ form.hidden_tag() }}
-            <div class="input-group input-group-lg"> {# Made input group larger for better prominence #}
-                <span class="input-group-text bg-transparent border-end-0">
-                    <i class="fas fa-search text-primary"></i>
-                </span>
-                {{ form.city(class="form-control search-input border-start-0", placeholder="Enter city name...", autocomplete="off") }}
-                {{ form.submit(class="btn search-button") }}
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                {{ form.city(class="form-control", placeholder="Enter city name...", autocomplete="off", autofocus=true) }}
+                {{ form.submit(class="btn btn-primary px-3") }}
             </div>
             {% if form.city.errors %}
-                <div class="mt-2">
+                <div class="mt-2 text-center">
                     {% for error in form.city.errors %}
-                        <span class="text-danger d-block">{{ error }}</span>
+                        <small class="text-danger d-block">{{ error }}</small>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -50,48 +62,53 @@
     </div>
 
     {% if weather_data %}
-    <div class="weather-card mt-4">
-        <div class="row align-items-center">
-            <div class="col-md-7 text-center text-md-start">
-                <h2 class="mb-1">{{ weather_data.city }}</h2>
-                <p class="weather-desc lead mb-2">{{ weather_data.description }}</p>
-                <div class="weather-temp display-4 my-3">{{ weather_data.temperature }}°C</div>
-                <p class="text-muted">Feels like: {{ weather_data.feels_like }}°C</p>
+    <div class="weather-card card shadow">
+        <div class="card-body py-3">
+            <div class="row align-items-center">
+                <div class="col-md-7 text-center text-md-start mb-3 mb-md-0">
+                    <h2 class="h3 fw-bold mb-1">{{ weather_data.city }}</h2>
+                    <p class="weather-desc mb-2">{{ weather_data.description }}</p>
+                    <div class="weather-temp mb-1">{{ weather_data.temperature }}°C</div>
+                    <p class="text-muted small">Feels like: {{ weather_data.feels_like }}°C</p>
+                </div>
+                <div class="col-md-5 text-center">
+                    <img src="https://openweathermap.org/img/wn/{{ weather_data.icon }}@4x.png" alt="{{ weather_data.description }}" class="img-fluid" style="max-width: 120px;">
+                </div>
             </div>
-            <div class="col-md-5 text-center">
-                <img src="https://openweathermap.org/img/wn/{{ weather_data.icon }}@4x.png" alt="{{ weather_data.description }}" class="img-fluid">
+            <hr class="my-2">
+            <div class="weather-details">
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-tint me-1"></i> Humidity</div>
+                    <div class="detail-value">{{ weather_data.humidity }}%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-wind me-1"></i> Wind Speed</div>
+                    <div class="detail-value">{{ weather_data.wind_speed }} m/s</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label"><i class="fas fa-thermometer-half me-1"></i> Feels Like</div>
+                    <div class="detail-value">{{ weather_data.feels_like }}°C</div>
+                </div>
             </div>
+            {% if current_user.is_authenticated %}
+            <div class="text-center mt-2 pt-2 border-top">
+                <p class="text-success small mb-0"><i class="fas fa-check-circle me-1"></i> This search has been saved to your history.</p>
+            </div>
+            {% endif %}
         </div>
-        <hr class="my-4">
-        <div class="weather-details">
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-tint me-1"></i> Humidity</div>
-                <div class="detail-value">{{ weather_data.humidity }}%</div>
-            </div>
-            <div class="detail-item">
-                <div class="detail-label"><i class="fas fa-wind me-1"></i> Wind Speed</div>
-                <div class="detail-value">{{ weather_data.wind_speed }} m/s</div>
-            </div>
-            {# You can add more details here if available and desired #}
-        </div>
-        {% if current_user.is_authenticated %}
-        <div class="text-center mt-4 pt-3 border-top">
-            <p class="text-success small"><i class="fas fa-check-circle me-1"></i> This search has been saved to your history.</p>
-        </div>
-        {% endif %}
     </div>
-    {% else %}
-    <div class="welcome-message mt-5 text-center">
-        <i class="fas fa-cloud-sun fa-4x mb-3 text-primary"></i>
-        <h2>Welcome to the Weather App</h2>
-        <p class="lead">Enter a city name above to get the current weather information.</p>
+    {% elif not request.form %}
+    <div class="welcome-message card card-body text-center py-4">
+        <i class="fas fa-cloud-sun fa-3x"></i>
+        <h2 class="mt-2 h4">Welcome to Nubion</h2>
+        <p class="text-muted mb-3">Enter a city name above to get started.</p>
         {% if not current_user.is_authenticated %}
-            <p class="mt-4">
-                <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary mx-1">
+            <p class="mt-3 mb-0">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-sm btn-outline-primary mx-1 welcome-action-btn"> 
                     <i class="fas fa-sign-in-alt me-1"></i>Login
                 </a>
                 or
-                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-success mx-1">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-sm btn-outline-success mx-1 welcome-action-btn"> 
                     <i class="fas fa-user-plus me-1"></i>Register
                 </a>
                 to save your searches!
@@ -100,13 +117,4 @@
     </div>
     {% endif %}
 </div>
-{% endblock %}
-
-{% block scripts %}
-    {{ super() }} {# This includes the parent block's scripts (like global JS links from base.html) #}
-    {# Add any page-specific JavaScript here if needed #}
-    <script>
-        // Example: You could add specific JS for the weather page here
-        // console.log("Weather page scripts loaded.");
-    </script>
 {% endblock %}

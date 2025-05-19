@@ -5,22 +5,22 @@
 {% block content %}
 <div class="history-container">
     <div class="card shadow-lg">
-        <div class="card-header bg-primary text-white text-center py-3">
-            <h1 class="mb-0">Weather Search History</h1>
+        <div class="card-header bg-primary text-white text-center py-4">
+            <h1 class="mb-0 display-6">Weather Search History</h1>
         </div>
         <div class="card-body p-4">
             {% if searches %}
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
+                <table class="table table-hover align-middle"> {# align-middle for better vertical centering #}
+                    <thead>
                         <tr>
-                            <th><i class="fas fa-map-marker-alt me-2"></i>City</th>
-                            <th><i class="fas fa-temperature-high me-2"></i>Temperature</th>
-                            <th><i class="fas fa-cloud me-2"></i>Description</th>
-                            <th><i class="fas fa-tint me-2"></i>Humidity</th>
-                            <th><i class="fas fa-wind me-2"></i>Wind Speed</th>
-                            <th><i class="fas fa-calendar-alt me-2"></i>Date/Time</th>
-                            <th>Actions</th>
+                            <th><i class="fas fa-map-marker-alt me-1"></i>City</th>
+                            <th><i class="fas fa-temperature-high me-1"></i>Temp.</th>
+                            <th><i class="fas fa-cloud me-1"></i>Description</th>
+                            <th><i class="fas fa-tint me-1"></i>Humidity</th>
+                            <th><i class="fas fa-wind me-1"></i>Wind</th>
+                            <th><i class="fas fa-calendar-alt me-1"></i>Date/Time</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,13 +28,13 @@
                         <tr>
                             <td class="fw-bold">{{ search.city }}</td>
                             <td>{{ search.temperature }}°C</td>
-                            <td>{{ search.description }}</td>
+                            <td class="text-capitalize">{{ search.description }}</td> {# Capitalize description #}
                             <td>{{ search.humidity }}%</td>
                             <td>{{ search.wind_speed }} m/s</td>
-                            <td>{{ search.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
-                            <td>
-                                <a href="{{ url_for('weather.index') }}?city={{ search.city }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-search"></i>
+                            <td>{{ search.timestamp.strftime('%b %d, %Y %I:%M %p') }}</td> {# More readable date #}
+                            <td class="text-center">
+                                <a href="{{ url_for('weather.index') }}?city={{ search.city }}" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Search again for {{search.city}}">
+                                    <i class="fas fa-redo-alt"></i> {# Changed icon #}
                                 </a>
                             </td>
                         </tr>
@@ -43,30 +43,19 @@
                 </table>
             </div>
             
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{{ url_for('weather.index') }}" class="btn btn-outline-primary">
+            <div class="d-flex justify-content-center mt-4"> {# Centered button #}
+                <a href="{{ url_for('weather.index') }}" class="btn btn-outline-secondary">
                     <i class="fas fa-arrow-left me-2"></i>Back to Search
                 </a>
-                
-                <div class="btn-group">
-                    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fas fa-filter me-2"></i>Filter
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Most Recent</a></li>
-                        <li><a class="dropdown-item" href="#">Alphabetical</a></li>
-                        <li><a class="dropdown-item" href="#">Warmest First</a></li>
-                        <li><a class="dropdown-item" href="#">Coldest First</a></li>
-                    </ul>
-                </div>
+                {# Filter button removed for simplicity, can be added back with JS logic #}
             </div>
             {% else %}
             <div class="text-center my-5 py-5">
-                <i class="fas fa-history fa-4x text-primary mb-3"></i>
-                <h3 class="mb-3">No Search History</h3>
-                <p class="lead mb-4">You haven't made any weather searches yet.</p>
-                <a href="{{ url_for('weather.index') }}" class="btn btn-primary btn-lg">
-                    <i class="fas fa-search me-2"></i>Search Weather
+                <i class="fas fa-search-minus fa-4x text-primary mb-4"></i> {# Changed icon #}
+                <h3 class="mb-3">No Search History Found</h3>
+                <p class="lead text-muted mb-4">Looks like you haven't searched for any weather yet.</p>
+                <a href="{{ url_for('weather.index') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-search me-2"></i>Make Your First Search
                 </a>
             </div>
             {% endif %}

@@ -1,88 +1,101 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Add animations to weather cards
+    // Initialize tooltips with a small delay to improve page load time
+    setTimeout(() => {
+        if (typeof bootstrap !== 'undefined') {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+            
+            // Auto-dismiss alerts after 5 seconds
+            document.querySelectorAll('.alert').forEach(alert => {
+                setTimeout(() => {
+                    if (alert && document.body.contains(alert)) {
+                        const bsAlert = new bootstrap.Alert(alert);
+                        bsAlert.close();
+                    }
+                }, 5000);
+            });
+        }
+    }, 200);
+    
+    // Add animations to weather cards - but only if they're visible
     const weatherCard = document.querySelector('.weather-card');
     if (weatherCard) {
-        setTimeout(() => {
-            weatherCard.classList.add('active');
-        }, 100);
+        setTimeout(() => weatherCard.classList.add('active'), 100);
     }
     
-    // Add event listener for city input - capitalize first letter of each word
+    // Optimize event listener for city input
     const cityInput = document.querySelector('input[name="city"]');
     if (cityInput) {
+        // Use input event with debounce pattern for better performance
+        let timeout;
         cityInput.addEventListener('input', function() {
-            this.value = this.value.replace(/\b\w/g, function(l) { return l.toUpperCase() });
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                this.value = this.value.replace(/\b\w/g, l => l.toUpperCase());
+            }, 300);
         });
     }
     
-    // Initialize tooltips
-    if (typeof bootstrap !== 'undefined') {
-        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-        
-        // Auto-dismiss alerts after 5 seconds
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                if (alert) {
-                    const bsAlert = new bootstrap.Alert(alert);
-                    bsAlert.close();
-                }
-            }, 5000);
-        });
-    }
-    
-    // Add active class to current nav item
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPath) {
-            link.classList.add('active');
-        }
-    });
-    
-    // Theme toggle functionality
+    // Theme toggle functionality - simplified for performance
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
-    const themeIcon = themeToggleBtn.querySelector('i');
-    
-    // Check for saved theme preference or use default
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    
-    // Apply the saved theme or default
-    if (currentTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
+    if (themeToggleBtn) {
+        const themeIcon = themeToggleBtn.querySelector('i');
+        
+        // Apply the saved theme or default once at page load
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeIcon.classList.replace('fa-moon', 'fa-sun');
+        }
+        
+        // Handle theme toggle button click
+        themeToggleBtn.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            
+            if (themeIcon.classList.contains('fa-moon')) {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
+        });
     }
     
-    // Handle theme toggle button click
-    themeToggleBtn.addEventListener('click', function() {
-        // Toggle dark mode class on body
-        document.body.classList.toggle('dark-theme');
-        
-        // Toggle moon/sun icon
-        if (themeIcon.classList.contains('fa-moon')) {
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
-            localStorage.setItem('theme', 'light');
-        }
-    });
+    // Remove unnecessary hover effects for performance
+    // Let CSS handle these transitions instead of JavaScript
+
+    // Enhanced auth page transitions
+    // Check if we're on a login or register page
+    const showRegisterLink = document.getElementById('show-register');
+    const showLoginLink = document.getElementById('show-login');
     
-    // Add hover effects for buttons in the action bar
-    const actionButtons = document.querySelectorAll('.action-button');
-    actionButtons.forEach(button => {
-        button.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-3px)';
+    if (showRegisterLink) {
+        showRegisterLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const loginForm = document.getElementById('login-form');
+            
+            // Add exit animation
+            loginForm.classList.add('auth-page-exit-active');
+            
+            // Navigate after animation completes
+            setTimeout(() => {
+                window.location.href = this.href;
+            }, 280);
         });
-        
-        button.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
+    }
+    
+    if (showLoginLink) {
+        showLoginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const registerForm = document.getElementById('register-form');
+            
+            // Add exit animation
+            registerForm.classList.add('auth-page-exit-active');
+            
+            // Navigate after animation completes
+            setTimeout(() => {
+                window.location.href = this.href;
+            }, 280);
         });
-    });
+    }
 });
