@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Nubion - Weather App{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-lg text-center p-5">
+        <i class="fas fa-cloud-sun fa-4x text-primary mb-4"></i>
+        <h1 class="display-4">Welcome to Nubion</h1>
+        <p class="lead mb-4">Your modern weather application, now deployed on Vercel!</p>
+        
+        <div class="alert alert-warning mb-4">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <strong>Note:</strong> This is a serverless deployment and may have limitations.
+            For the full experience, please visit the original GitHub repository or run the app locally.
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">Project Features</h5>
+                        <ul class="list-group list-group-flush text-start">
+                            <li class="list-group-item bg-transparent">Real-time weather data</li>
+                            <li class="list-group-item bg-transparent">User authentication</li>
+                            <li class="list-group-item bg-transparent">Search history tracking</li>
+                            <li class="list-group-item bg-transparent">Dark/light theme toggle</li>
+                            <li class="list-group-item bg-transparent">Responsive design</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-4">
+            <a href="https://github.com/yourusername/nubion" class="btn btn-outline-primary btn-lg">
+                <i class="fab fa-github me-2"></i>View on GitHub
+            </a>
+        </p>
+    </div>
+</div>
+{% endblock %}
