@@ -1,11 +1,16 @@
+/**
+ * Nubion Weather Application Frontend JavaScript
+ * Handles UI interactions, theme switching, and animation effects
+ */
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize tooltips with a small delay to improve page load time
+    // Initialize Bootstrap components with a small delay to improve page load performance
     setTimeout(() => {
         if (typeof bootstrap !== 'undefined') {
+            // Initialize tooltips for better UI experience
             const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
             [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
             
-            // Auto-dismiss alerts after 5 seconds
+            // Auto-dismiss flash alerts after 5 seconds
             document.querySelectorAll('.alert').forEach(alert => {
                 setTimeout(() => {
                     if (alert && document.body.contains(alert)) {
@@ -17,16 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 200);
     
-    // Add animations to weather cards - but only if they're visible
+    // Add animations to weather cards when present
     const weatherCard = document.querySelector('.weather-card');
     if (weatherCard) {
         setTimeout(() => weatherCard.classList.add('active'), 100);
     }
     
-    // Optimize event listener for city input
+    // Auto-capitalize city names in the search input
     const cityInput = document.querySelector('input[name="city"]');
     if (cityInput) {
-        // Use input event with debounce pattern for better performance
         let timeout;
         cityInput.addEventListener('input', function() {
             clearTimeout(timeout);
@@ -36,18 +40,18 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Theme toggle functionality - simplified for performance
+    // Theme switching functionality with local storage persistence
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
     if (themeToggleBtn) {
         const themeIcon = themeToggleBtn.querySelector('i');
         
-        // Apply the saved theme or default once at page load
+        // Apply saved theme preference on page load
         if (localStorage.getItem('theme') === 'dark') {
             document.body.classList.add('dark-theme');
             themeIcon.classList.replace('fa-moon', 'fa-sun');
         }
         
-        // Handle theme toggle button click
+        // Handle theme toggle button interactions
         themeToggleBtn.addEventListener('click', function() {
             document.body.classList.toggle('dark-theme');
             
@@ -60,39 +64,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    // Remove unnecessary hover effects for performance
-    // Let CSS handle these transitions instead of JavaScript
 
-    // Enhanced auth page transitions
-    // Check if we're on a login or register page
+    // Page transition animations for authentication flows
     const showRegisterLink = document.getElementById('show-register');
     const showLoginLink = document.getElementById('show-login');
     
+    // Handle smooth transition from login to register page
     if (showRegisterLink) {
         showRegisterLink.addEventListener('click', function(e) {
             e.preventDefault();
             const loginForm = document.getElementById('login-form');
-            
-            // Add exit animation
             loginForm.classList.add('auth-page-exit-active');
             
-            // Navigate after animation completes
             setTimeout(() => {
                 window.location.href = this.href;
             }, 280);
         });
     }
     
+    // Handle smooth transition from register to login page
     if (showLoginLink) {
         showLoginLink.addEventListener('click', function(e) {
             e.preventDefault();
             const registerForm = document.getElementById('register-form');
-            
-            // Add exit animation
             registerForm.classList.add('auth-page-exit-active');
             
-            // Navigate after animation completes
             setTimeout(() => {
                 window.location.href = this.href;
             }, 280);
